@@ -3,6 +3,15 @@
 This python-project enables to control the Work LightShark DMX-Console via HTTP and MIDI.
 
 
+
+## Usage
+
+```
+pip install python-rtmidi, pythonosc
+```
+
+
+
 ## Currently working HTTP Requests
 
 - GET `/state`
@@ -18,4 +27,6 @@ This python-project enables to control the Work LightShark DMX-Console via HTTP 
 
 - GET `/master`
 - POST `/master/#value`
+
+
 

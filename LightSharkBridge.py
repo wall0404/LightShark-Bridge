@@ -32,22 +32,23 @@ class LightSharkBridge:
     def __init__(self, osc_client):
         self.osc_client = osc_client
 
-    def init_functions(self, fader_count, executor_matrix, midi_client):
-        for x in range(fader_count):
-            fader = Fader(x + 1, self.osc_client, midi_client, None)
+    def init_functions(self, midi_client, initial_conf):
+        for x in range(len(initial_conf['fader'])):
+            fader = Fader(initial_conf['fader'][x]['fader_id'], self.osc_client, midi_client, initial_conf['fader'][x]['cc'])
             self.faders.append(fader)
             self.functions.append(fader)
 
-        for x in range(executor_matrix[0]):
+        executor_matrix = [2, 6, 8]
+        for x in range(len(initial_conf['executor'])):
             self.executors.append([])
-            for y in range(executor_matrix[1]):
+            for y in range(len(initial_conf['executor'][x])):
                 self.executors[x].append([])
-                for z in range(executor_matrix[2]):
+                for z in range(len(initial_conf['executor'][x][y])):
                     executor = Executor(x + 1, y + 1, z + 1, self.osc_client, midi_client, None)
                     self.executors[x][y].append(executor)
                     self.functions.append(executor)
 
-        self.master = MasterFader(self.osc_client, midi_client, 33)
+        self.master = MasterFader(self.osc_client, midi_client, initial_conf['master_cc'])
         self.functions.append(self.master)
 
     def find_function_by_cc(self, cc_number):
@@ -77,3 +78,6 @@ class LightSharkBridge:
 
     def get_state(self):
         return encode_ls_bridge(self)
+
+
+
