@@ -2,7 +2,7 @@ class Function:
     value = None
     osc_client = None
     cc_number = None
-    osc_url = "/LS/Fader/PB/"
+    osc_url = None
 
     max_value = 1
     min_value = 0
@@ -25,15 +25,15 @@ class Function:
         else:
             return TypeError("value is not an int")
 
+    def get_value(self):
+        return self.value
+
     def update_midi(self):
         if self.cc_number is not None:
             self.midi_client.send_midi_message(self.cc_number, self.value)
 
     def update_osc(self):
         self.osc_client.send_osc_message(self.osc_url, self.value)
-
-    def get_value(self):
-        return self.value
 
 
 class Fader(Function):
@@ -44,7 +44,7 @@ class Fader(Function):
         super().__init__(osc_client, midi_client, cc_number)
         self.fader_id = fader_id
         self.osc_client = osc_client
-        self.osc_url = "LS/Fader/PB/" + str(self.fader_id)
+        self.osc_url = "/LS/Level/PB/" + str(self.fader_id)
 
 
 class MasterFader(Function):
@@ -65,9 +65,3 @@ class Executor(Function):
         self.executor_y = executor_y
         self.executor_z = executor_z
         self.osc_url = "/LS/Executor/" + str(self.executor_x) + "/" + str(self.executor_y) + "/" + str(self.executor_z)
-
-
-# type = "fader" / "toggle"
-
-# OSC, cc_number, url, [fader_id], type
-# OSC, cc_number, url, [x, y, z], type

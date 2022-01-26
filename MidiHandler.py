@@ -14,15 +14,16 @@ class MidiHandler:
         self.midi_out_port, port_name = open_midioutput(1)
         self.ls_bridge = ls_bridge
 
-        thread = Thread(target=listen, args=(self.midi_in_port, self.handle_midi_input(),))
+        thread = Thread(target=listen, args=(self.midi_in_port, self.handle_midi_input,))
         thread.start()
 
     def send_midi_message(self, cc_number, value):
         self.midi_out_port.send_message([CONTROL_CHANGE, cc_number, value])
+        pass
 
     def handle_midi_input(self, cc_number, value):
-        # TODO: handle midi input
-        pass
+        function = self.ls_bridge.find_function_by_cc(cc_number)
+        function.set_value(value)
 
     def sync_midi_console(self):
         # sync faders
