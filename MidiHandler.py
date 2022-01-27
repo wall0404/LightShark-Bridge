@@ -1,3 +1,4 @@
+from rtmidi import NoDevicesError
 from rtmidi.midiutil import open_midiinput, open_midioutput
 from rtmidi.midiconstants import CONTROL_CHANGE
 import time
@@ -10,16 +11,23 @@ class MidiHandler:
     ls_bridge = None
 
     def __init__(self, ls_bridge):
-        self.midi_in_port, port_name = open_midiinput(1)
-        self.midi_out_port, port_name = open_midioutput(1)
         self.ls_bridge = ls_bridge
+        self.connect_midi_console()
 
         thread = Thread(target=listen, args=(self.midi_in_port, self.handle_midi_input,))
         thread.start()
 
+    def connect_midi_console(self):
+        try:
+            self.midi_in_port, port_name = open_midiinput(1)
+            self.midi_out_port, port_name = open_midioutput(1)
+        except NoDevicesError:
+            print("Midi Console not connected")
+
     def send_midi_message(self, cc_number, value):
-        self.midi_out_port.send_message([CONTROL_CHANGE, cc_number, value])
-        pass
+        # only if console is connected:
+        if self.midi_out_port is not None:
+            self.midi_out_port.send_message([CONTROL_CHANGE, cc_number, value])
 
     def handle_midi_input(self, cc_number, value):
         function = self.ls_bridge.find_function_by_cc(cc_number)
@@ -28,8 +36,8 @@ class MidiHandler:
     def sync_midi_console(self):
         # sync faders
         for x in range(len(self.ls_bridge.fader)):
-            value = self.ls_bridge.fader[x].get_fader()
-            self.ls_bridge.fader[x].set_fader(value)
+            value = self.ls_bridge.faders[x].get_value()
+            self.ls_bridge.faders[x].set_value(value)
 
         # sync master
         value = self.ls_bridge.master.get_fader()
@@ -39,7 +47,7 @@ class MidiHandler:
 
 
 def listen(midi_in_port, callback):
-    while True:
+    while midi_in_port is not None:
         msg = midi_in_port.get_message()
 
         if msg:
