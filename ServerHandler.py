@@ -121,7 +121,7 @@ class ServerHandler:
         RequestHandler.ls_bridge = ls_bridge
 
         server_address = (self.hostName, self.serverPort)
-        print("Start server http://%s:%s" % (self.hostName, self.serverPort))
+        print("Start server at http://%s:%s" % (self.hostName, self.serverPort))
         self.httpd = ThreadingHTTPServer(server_address, RequestHandler)
 
         thread = Thread(target=serve, args=(self.httpd,))
