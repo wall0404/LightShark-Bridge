@@ -9,9 +9,9 @@ class Routes:
     @staticmethod
     def matches_path(method, path):
         for x in range(len(Routes.routes)):
-            fun = Routes.routes[x].matches_path(method, path)
-            if fun:
-                return fun
+            func = Routes.routes[x].matches_path(method, path)
+            if func:
+                return func
         return -1
 
 
@@ -126,16 +126,6 @@ class ServerHandler:
 
         thread = Thread(target=serve, args=(self.httpd,))
         thread.start()
-
-
-class StrHelpers:
-    @staticmethod
-    def validate_pattern_part(string):
-        return string.isalpha()
-
-    @staticmethod
-    def validate_path_path(string):
-        return string.isalpha()
 
 
 # define routes
