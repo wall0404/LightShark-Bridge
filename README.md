@@ -8,7 +8,7 @@ Unlike the built-in MIDI function of the LightShark, this application also suppo
 ## Usage
 
 ```
-pip install python-rtmidi pythonosc
+pip install python-rtmidi python-osc
 ```
 
 Define the faders and executor configuration with the related MIDI CC Codes in `main.py initial_conf`

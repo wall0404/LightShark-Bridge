@@ -69,11 +69,11 @@ class Executor(Function):
 
     mode = "toggle"
 
-    def __init__(self, executor_x, executor_y, executor_z, osc_client, midi_client, cc_number):
+    def __init__(self, executor_x, executor_y, executor_z, osc_client, midi_client, cc_number, mode="toggle"):
         super().__init__(osc_client, midi_client, cc_number)
 
         self.executor_x = executor_x
         self.executor_y = executor_y
         self.executor_z = executor_z
+        self.mode = mode
         self.osc_url = "/LS/Executor/" + str(self.executor_x) + "/" + str(self.executor_y) + "/" + str(self.executor_z)
-
