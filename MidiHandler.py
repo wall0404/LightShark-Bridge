@@ -27,11 +27,12 @@ class MidiHandler:
     def send_midi_message(self, cc_number, value):
         # only if console is connected:
         if self.midi_out_port is not None:
-            self.midi_out_port.send_message([CONTROL_CHANGE, cc_number, value])
+            self.midi_out_port.send_message([CONTROL_CHANGE, cc_number, value/2])
 
     def handle_midi_input(self, cc_number, value):
         function = self.ls_bridge.find_function_by_cc(cc_number)
-        function.set_value(value)
+        if function:
+            function.set_value(value*2)
 
     def sync_midi_console(self):
         # sync faders
@@ -56,4 +57,3 @@ def listen(midi_in_port, callback):
 
             callback(cc_number, value)
 
-        time.sleep(0.01)
