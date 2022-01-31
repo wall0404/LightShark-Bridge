@@ -1,4 +1,5 @@
 class Function:
+    name = ""
     value = None
     osc_client = None
     cc_number = None
@@ -9,8 +10,9 @@ class Function:
 
     mode = "push"
 
-    def __init__(self, osc_client, midi_client, cc_number):
+    def __init__(self, osc_client, midi_client, name, cc_number):
         self.value = 0
+        self.name = name
         self.osc_client = osc_client
         self.midi_client = midi_client
         self.cc_number = cc_number
@@ -33,6 +35,9 @@ class Function:
     def get_value(self):
         return self.value
 
+    def get_name(self):
+        return self.name
+
     def update_midi(self):
         if self.cc_number is not None:
             self.midi_client.send_midi_message(self.cc_number, self.value)
@@ -49,8 +54,8 @@ class Fader(Function):
     max_value = 255
     min_value = 0
 
-    def __init__(self, fader_id, osc_client, midi_client, cc_number):
-        super().__init__(osc_client, midi_client, cc_number)
+    def __init__(self, fader_id, osc_client, midi_client, name, cc_number):
+        super().__init__(osc_client, midi_client, name, cc_number)
         self.fader_id = fader_id
         self.osc_client = osc_client
         self.osc_url = "/LS/Level/PB/" + str(self.fader_id)
@@ -61,7 +66,7 @@ class MasterFader(Function):
     min_value = 0
 
     def __init__(self, osc_client, midi_client, cc_number):
-        super().__init__(osc_client, midi_client, cc_number)
+        super().__init__(osc_client, midi_client, "", cc_number)
         self.osc_url = "/LS/Level/GM"
 
 
@@ -70,7 +75,7 @@ class Executor(Function):
     mode = "toggle"
 
     def __init__(self, executor_x, executor_y, executor_z, osc_client, midi_client, cc_number, mode="toggle"):
-        super().__init__(osc_client, midi_client, cc_number)
+        super().__init__(osc_client, midi_client, "master", cc_number)
 
         self.executor_x = executor_x
         self.executor_y = executor_y

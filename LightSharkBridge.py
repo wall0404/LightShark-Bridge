@@ -8,7 +8,12 @@ def encode_ls_bridge(ls_bridge):
 
     return_obj = {'fader': [], 'executor': [], 'master': 0}
     for x in range(fader_count):
-        return_obj['fader'].append(ls_bridge.get_fader_value(x + 1))
+        return_obj['fader'].append(
+            {
+                "name": ls_bridge.get_fader_name(x + 1),
+                "value": ls_bridge.get_fader_value(x + 1)
+            }
+        )
 
     for x in range(len(ls_bridge.executors)):
         return_obj['executor'].append([])
@@ -34,11 +39,16 @@ class LightSharkBridge:
 
     def init_functions(self, midi_client, initial_conf):
         for x in range(len(initial_conf['fader'])):
-            fader = Fader(initial_conf['fader'][x]['fader_id'], self.osc_client, midi_client, initial_conf['fader'][x]['cc'])
+            fader = Fader(
+                initial_conf['fader'][x]['fader_id'],
+                self.osc_client,
+                midi_client,
+                initial_conf['fader'][x]['name'],
+                initial_conf['fader'][x]['cc'])
+
             self.faders.append(fader)
             self.functions.append(fader)
 
-        executor_matrix = [2, 6, 8]
         for x in range(len(initial_conf['executor'])):
             self.executors.append([])
             for y in range(len(initial_conf['executor'][x])):
@@ -64,6 +74,9 @@ class LightSharkBridge:
     def get_fader_value(self, fader_id):
         return self.faders[fader_id - 1].get_value()
 
+    def get_fader_name(self, fader_id):
+        return self.faders[fader_id - 1].get_name()
+
     def set_executor_state(self, x, y, z, value):
         self.executors[x - 1][y - 1][z - 1].set_value(value)
 
@@ -78,6 +91,3 @@ class LightSharkBridge:
 
     def get_state(self):
         return encode_ls_bridge(self)
-
-
-
